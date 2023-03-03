@@ -1,0 +1,16 @@
+type TwitterRecord {
+  id: ID!
+  auhtorID: String!
+  author: User!
+  isComment: Boolean!
+  parentRecordId: String
+  parentRecord: TwitterRecord
+  childrenRecords: [TwitterRecord]!
+  text: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Query{
+  twitterRecords: [TwitterRecord]
+}
