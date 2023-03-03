@@ -1,10 +1,12 @@
 import * as bcrypt from "bcryptjs";
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { UsersService, UserWithRecords, WithoutPassword } from "src/users";
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    @Inject(forwardRef(() => UsersService)) private usersService: UsersService,
+  ) {}
 
   async validateUser(
     email: string,

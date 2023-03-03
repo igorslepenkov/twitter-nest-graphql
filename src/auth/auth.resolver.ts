@@ -1,10 +1,13 @@
+import { UseFilters } from "@nestjs/common";
 import { Inject } from "@nestjs/common/decorators/core/inject.decorator";
 import { Args, Mutation, Resolver } from "@nestjs/graphql";
 import { JwtService } from "@nestjs/jwt";
+import { ApolloErrorFilter } from "src/filters";
 import { UserInput } from "src/graphql";
 import { AuthService } from "./auth.service";
 
 @Resolver("Auth")
+@UseFilters(ApolloErrorFilter)
 export class AuthResolver {
   constructor(
     private authService: AuthService,

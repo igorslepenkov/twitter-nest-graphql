@@ -11,11 +11,13 @@ import { UsersModule, UsersService } from "./users";
 import { PrismaModule, PrismaService } from "./prisma";
 import { AuthModule } from "./auth/auth.module";
 import { AuthService } from "./auth/auth.service";
+import { AuthGuard } from "./auth";
 
 @Module({
   imports: [
     UsersModule,
     PrismaModule,
+    AuthModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       playground: false,
@@ -27,7 +29,6 @@ import { AuthService } from "./auth/auth.service";
       csrfPrevention: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
-    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService, PrismaService, UsersService],
