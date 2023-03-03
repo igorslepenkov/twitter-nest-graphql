@@ -7,8 +7,10 @@ import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service'
-import { UsersModule } from './modules/Users';
-import { PrismaModule } from './modules/prisma';
+import { UsersModule, UsersService } from './users';
+import { PrismaModule, PrismaService } from './prisma';
+import { AuthModule } from './auth/auth.module';
+import { AuthService } from './auth/auth.service';
 
 
 @Module({
@@ -26,8 +28,9 @@ import { PrismaModule } from './modules/prisma';
       csrfPrevention: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
+    AuthModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AuthService, PrismaService, UsersService],
 })
 export class AppModule {}
