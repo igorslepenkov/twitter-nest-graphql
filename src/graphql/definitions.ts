@@ -8,9 +8,29 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export class LoginInput {
+    email: string;
+    password: string;
+}
+
 export class UserInput {
     email: string;
     password: string;
+}
+
+export class AuthorizationError {
+    error: string;
+}
+
+export class LoginSuccessfull {
+    accessToken: string;
+    refreshToken: string;
+}
+
+export abstract class IMutation {
+    abstract login(input: LoginInput): Nullable<LoginResult> | Promise<Nullable<LoginResult>>;
+
+    abstract createUser(input: UserInput): Nullable<UserWithoutPassword> | Promise<Nullable<UserWithoutPassword>>;
 }
 
 export class TwitterRecord {
@@ -29,9 +49,9 @@ export class TwitterRecord {
 export abstract class IQuery {
     abstract twitterRecords(): Nullable<Nullable<TwitterRecord>[]> | Promise<Nullable<Nullable<TwitterRecord>[]>>;
 
-    abstract users(): Nullable<Nullable<User>[]> | Promise<Nullable<Nullable<User>[]>>;
+    abstract users(): Nullable<Nullable<UserWithoutPassword>[]> | Promise<Nullable<Nullable<UserWithoutPassword>[]>>;
 
-    abstract user(id: string): Nullable<User> | Promise<Nullable<User>>;
+    abstract user(id: string): Nullable<UserWithoutPassword> | Promise<Nullable<UserWithoutPassword>>;
 }
 
 export class User {
@@ -41,8 +61,11 @@ export class User {
     records: TwitterRecord[];
 }
 
-export abstract class IMutation {
-    abstract createUser(input: UserInput): Nullable<User> | Promise<Nullable<User>>;
+export class UserWithoutPassword {
+    id: string;
+    email: string;
+    records: TwitterRecord[];
 }
 
+export type LoginResult = LoginSuccessfull | AuthorizationError;
 type Nullable<T> = T | null;

@@ -1,13 +1,19 @@
-type User{
+type User {
   id: ID!
   email: String!
   password: String!
   records: [TwitterRecord!]!
 }
 
-type Query{
-  users: [User]
-  user(id: ID!): User
+type UserWithoutPassword {
+  id: ID!
+  email: String!
+  records: [TwitterRecord!]!
+}
+
+type Query {
+  users: [UserWithoutPassword]
+  user(id: ID!): UserWithoutPassword
 }
 
 input UserInput {
@@ -16,5 +22,5 @@ input UserInput {
 }
 
 type Mutation {
-  createUser(input: UserInput!): User
+  createUser(input: UserInput!): UserWithoutPassword
 }

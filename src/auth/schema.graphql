@@ -1,0 +1,19 @@
+type AuthorizationError {
+  error: String!
+}
+
+type LoginSuccessfull {
+  accessToken: String!
+  refreshToken: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+union LoginResult = LoginSuccessfull | AuthorizationError
+
+type Mutation {
+  login(input: LoginInput!): LoginResult
+}
