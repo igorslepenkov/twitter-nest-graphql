@@ -31,7 +31,10 @@
     "bcryptjs": "^2.4.3",
     "datasource-sql": "^2.0.1",
     "dotenv": "^16.0.3",
+    "ejs": "^3.1.8",
     "graphql": "^16.6.0",
+    "nodemailer": "^6.9.1",
+    "redis": "^4.6.5",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "ts-morph": "^17.0.1"

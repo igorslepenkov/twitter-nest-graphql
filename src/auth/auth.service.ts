@@ -1,6 +1,7 @@
 import * as bcrypt from "bcryptjs";
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { UsersService, UserWithRecords, WithoutPassword } from "src/users";
+import { ApolloError } from "apollo-server-express";
 
 @Injectable()
 export class AuthService {
@@ -8,20 +9,30 @@ export class AuthService {
     @Inject(forwardRef(() => UsersService)) private usersService: UsersService,
   ) {}
 
-  async validateUser(
+  public async validateUser(
     email: string,
     password: string,
   ): Promise<WithoutPassword<UserWithRecords> | null> {
-    const user = await this.usersService.getByEmail(email);
+    try {
+      const user = await this.usersService.getByEmail(email);
 
-    if (user) {
-      const isPasswordCorrect = await bcrypt.compare(password, user.password);
+      if (user) {
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
-      if (isPasswordCorrect) {
+        if (!isPasswordCorrect) throw new ApolloError("Password is incorrect");
+
         return this.usersService.removePasswordFromUser(user);
       }
-    }
 
-    return null;
+      throw new ApolloError("It seems that user with such email not exists");
+    } catch (err) {
+      const { message } = err;
+
+      if (message) {
+        throw new ApolloError(message);
+      }
+
+      throw new ApolloError("Unexpected error during user validation");
+    }
   }
 }

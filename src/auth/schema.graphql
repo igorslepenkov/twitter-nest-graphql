@@ -1,19 +1,27 @@
-type AuthorizationError {
-  error: String!
-}
-
-type LoginSuccessfull {
+type AuthSuccessfull {
   accessToken: String!
   refreshToken: String!
 }
 
-input LoginInput {
+type RegisterSuccessfull {
+  message: String!
+}
+
+type EmailValidationSuccessfull {
+  mesage: String!
+}
+
+input UsersInput {
   email: String!
   password: String!
 }
 
-union LoginResult = LoginSuccessfull | AuthorizationError
+input ValidateEmailInput {
+  token: String!
+}
 
 type Mutation {
-  login(input: LoginInput!): LoginResult
+  login(input: UsersInput!): AuthSuccessfull
+  register(input: UsersInput): RegisterSuccessfull
+  validateEmail(input: ValidateEmailInput): AuthSuccessfull
 }

@@ -11,7 +11,8 @@ import { UsersModule, UsersService } from "./users";
 import { PrismaModule, PrismaService } from "./prisma";
 import { AuthModule } from "./auth/auth.module";
 import { AuthService } from "./auth/auth.service";
-import { AuthGuard } from "./auth";
+import { RedisModule } from "./redis/redis.module";
+import { MailersModule } from './mailers/mailers.module';
 
 @Module({
   imports: [
@@ -29,6 +30,8 @@ import { AuthGuard } from "./auth";
       csrfPrevention: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
+    RedisModule,
+    MailersModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService, PrismaService, UsersService],

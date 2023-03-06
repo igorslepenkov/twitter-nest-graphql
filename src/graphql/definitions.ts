@@ -8,9 +8,13 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export class LoginInput {
+export class UsersInput {
     email: string;
     password: string;
+}
+
+export class ValidateEmailInput {
+    token: string;
 }
 
 export class UserInput {
@@ -18,17 +22,25 @@ export class UserInput {
     password: string;
 }
 
-export class AuthorizationError {
-    error: string;
-}
-
-export class LoginSuccessfull {
+export class AuthSuccessfull {
     accessToken: string;
     refreshToken: string;
 }
 
+export class RegisterSuccessfull {
+    message: string;
+}
+
+export class EmailValidationSuccessfull {
+    mesage: string;
+}
+
 export abstract class IMutation {
-    abstract login(input: LoginInput): Nullable<LoginResult> | Promise<Nullable<LoginResult>>;
+    abstract login(input: UsersInput): Nullable<AuthSuccessfull> | Promise<Nullable<AuthSuccessfull>>;
+
+    abstract register(input?: Nullable<UsersInput>): Nullable<RegisterSuccessfull> | Promise<Nullable<RegisterSuccessfull>>;
+
+    abstract validateEmail(input?: Nullable<ValidateEmailInput>): Nullable<AuthSuccessfull> | Promise<Nullable<AuthSuccessfull>>;
 
     abstract createUser(input: UserInput): Nullable<UserWithoutPassword> | Promise<Nullable<UserWithoutPassword>>;
 }
@@ -67,5 +79,4 @@ export class UserWithoutPassword {
     records: TwitterRecord[];
 }
 
-export type LoginResult = LoginSuccessfull | AuthorizationError;
 type Nullable<T> = T | null;

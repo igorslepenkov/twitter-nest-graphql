@@ -3,6 +3,7 @@ import { Inject } from "@nestjs/common";
 import { UserInput } from "src/graphql";
 import { PrismaService } from "../prisma";
 import { TwitterRecord, User } from "@prisma/client";
+import { ApolloError } from "apollo-server-express";
 
 export type WithoutPassword<T> = Omit<T, "password">;
 
@@ -42,19 +43,28 @@ export class UsersService {
   public async create(
     userInput: UserInput,
   ): Promise<WithoutPassword<UserWithRecords>> {
-    const { user: userModel } = this.prisma;
+    try {
+      const { user: userModel } = this.prisma;
 
-    const { email, password } = userInput;
-    const hashedPassword = await this.hashPassword(password);
+      const { email, password } = userInput;
+      const hashedPassword = await this.hashPassword(password);
 
-    const user = await userModel.create({
-      data: { email, password: hashedPassword },
-      include: { records: true },
-    });
-    return this.removePasswordFromUser(user);
+      const user = await userModel.create({
+        data: { email, password: hashedPassword },
+        include: { records: true },
+      });
+      return this.removePasswordFromUser(user);
+    } catch (err) {
+      if (err.message) {
+        throw new ApolloError(err.message);
+      }
+      throw new ApolloError(
+        "User could not be created due to unexpected error",
+      );
+    }
   }
 
-  private async hashPassword(password: string): Promise<string> {
+  public async hashPassword(password: string): Promise<string> {
     const hashedPassword: string = await bcrypt.hash(
       password,
       Number(process.env.CRYPT_SALT) ?? 10,
