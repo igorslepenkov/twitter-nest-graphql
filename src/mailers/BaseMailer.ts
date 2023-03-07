@@ -17,7 +17,7 @@ export class BaseMailer {
       process.env.NODE_ENV === "production"
         ? process.env.MAILER_DEV_HOST
         : process.env.MAILER_PROD_HOST;
-    console.log(nodemailer);
+
     this.transporter = nodemailer.createTransport({
       service: "gmail",
       port: 465,
