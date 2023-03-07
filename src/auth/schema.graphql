@@ -11,6 +11,10 @@ type EmailValidationSuccessfull {
   mesage: String!
 }
 
+type SignOutSuccessfull {
+  message: String!
+}
+
 input UsersInput {
   email: String!
   password: String!
@@ -18,6 +22,10 @@ input UsersInput {
 
 input ValidateEmailInput {
   token: String!
+}
+
+type Query {
+  signOut: SignOutSuccessfull
 }
 
 type Mutation {

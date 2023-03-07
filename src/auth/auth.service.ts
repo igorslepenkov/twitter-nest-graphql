@@ -11,6 +11,7 @@ import {
   RegisterSuccessfull,
   UserInput,
   ValidateEmailInput,
+  SignOutSuccessfull,
 } from "src/graphql";
 import { RedisService } from "src/redis";
 import { AuthMailer, UsersMailer } from "src/mailers";
@@ -41,13 +42,13 @@ export class AuthService {
       const accessToken = this.jwtAccessService.sign({ userId });
       const refreshToken = this.jwtRefreshServcie.sign({ userId });
 
-      await this.redisService.setNewSessionData(userId, {
+      const isSet = await this.redisService.setNewSessionData(userId, {
         ...privacyInfo,
         accessToken,
         refreshToken,
       });
 
-      await this.authMailer.sendLoginMessage(email, privacyInfo);
+      if (isSet) await this.authMailer.sendLoginMessage(email, privacyInfo);
 
       return {
         accessToken,
@@ -123,6 +124,26 @@ export class AuthService {
           refreshToken,
         };
       }
+    } catch (err) {
+      const message = err.message;
+
+      if (message) {
+        throw new ApolloError(message);
+      }
+
+      throw new ApolloError("Unexpected user login error");
+    }
+  }
+
+  public async signOut(
+    userId: string,
+    privacyInfo: PrivacyInfo,
+  ): Promise<SignOutSuccessfull> {
+    try {
+      await this.redisService.removeActiveSession(userId, privacyInfo);
+      return {
+        message: "Sign out successfull",
+      };
     } catch (err) {
       const message = err.message;
 

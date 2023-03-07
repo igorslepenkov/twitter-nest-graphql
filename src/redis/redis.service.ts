@@ -100,11 +100,17 @@ export class RedisService {
     return JSON.parse(data);
   }
 
-  public async setNewSessionData(userId: string, data: Session) {
-    await this.client.connect();
+  public async setNewSessionData(
+    userId: string,
+    data: Session,
+  ): Promise<boolean> {
     const key = `sessions:user:${userId}`;
-    const JSONDataString = JSON.stringify(data);
-    const isExists = await this.client.SISMEMBER(key, JSONDataString);
+    const isExists = await this.isSessionActive(userId, {
+      ip: data.ip,
+      userAgent: data.userAgent,
+    });
+
+    await this.client.connect();
 
     if (!isExists) {
       const sessionsLength = await this.client.SCARD(key);
@@ -116,10 +122,14 @@ export class RedisService {
         await this.client.SREM(key, firstSession[0]);
       }
 
-      await this.client.SADD(key, JSONDataString);
+      await this.client.SADD(key, JSON.stringify(data));
+      await this.client.disconnect();
+      return true;
     }
 
     await this.client.disconnect();
+
+    return false;
   }
 
   public async getAllActiveSessions(userId: string): Promise<Session[]> {
@@ -135,16 +145,31 @@ export class RedisService {
 
   public async isSessionActive(
     userId: string,
-    privacyinfo: PrivacyInfo,
+    privacyInfo: PrivacyInfo,
   ): Promise<boolean> {
     const sessions = await this.getAllActiveSessions(userId);
 
     const isActive = sessions.some(
       (session) =>
-        session.ip === privacyinfo.ip &&
-        session.userAgent === privacyinfo.userAgent,
+        session.ip === privacyInfo.ip &&
+        session.userAgent === privacyInfo.userAgent,
     );
 
     return isActive;
+  }
+
+  public async removeActiveSession(userId: string, privacyInfo: PrivacyInfo) {
+    const sessions = await this.getAllActiveSessions(userId);
+    await this.client.connect();
+    const key = `sessions:user:${userId}`;
+
+    const sessionToRemove = sessions.find(
+      (session) =>
+        session.ip === privacyInfo.ip &&
+        session.userAgent === privacyInfo.userAgent,
+    );
+
+    await this.client.SREM(key, JSON.stringify(sessionToRemove));
+    await this.client.disconnect();
   }
 }

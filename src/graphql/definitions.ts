@@ -35,6 +35,20 @@ export class EmailValidationSuccessfull {
     mesage: string;
 }
 
+export class SignOutSuccessfull {
+    message: string;
+}
+
+export abstract class IQuery {
+    abstract signOut(): Nullable<SignOutSuccessfull> | Promise<Nullable<SignOutSuccessfull>>;
+
+    abstract twitterRecords(): Nullable<Nullable<TwitterRecord>[]> | Promise<Nullable<Nullable<TwitterRecord>[]>>;
+
+    abstract users(): Nullable<Nullable<UserWithoutPassword>[]> | Promise<Nullable<Nullable<UserWithoutPassword>[]>>;
+
+    abstract user(id: string): Nullable<UserWithoutPassword> | Promise<Nullable<UserWithoutPassword>>;
+}
+
 export abstract class IMutation {
     abstract login(input: UsersInput): Nullable<AuthSuccessfull> | Promise<Nullable<AuthSuccessfull>>;
 
@@ -56,14 +70,6 @@ export class TwitterRecord {
     text: string;
     createdAt: string;
     updatedAt: string;
-}
-
-export abstract class IQuery {
-    abstract twitterRecords(): Nullable<Nullable<TwitterRecord>[]> | Promise<Nullable<Nullable<TwitterRecord>[]>>;
-
-    abstract users(): Nullable<Nullable<UserWithoutPassword>[]> | Promise<Nullable<Nullable<UserWithoutPassword>[]>>;
-
-    abstract user(id: string): Nullable<UserWithoutPassword> | Promise<Nullable<UserWithoutPassword>>;
 }
 
 export class User {
