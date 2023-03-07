@@ -1,9 +1,9 @@
 import * as bcrypt from "bcryptjs";
+import { ApolloError } from "apollo-server-express";
 import { Inject } from "@nestjs/common";
 import { UserInput } from "src/graphql";
 import { PrismaService } from "../prisma";
 import { TwitterRecord, User } from "@prisma/client";
-import { ApolloError } from "apollo-server-express";
 
 export type WithoutPassword<T> = Omit<T, "password">;
 

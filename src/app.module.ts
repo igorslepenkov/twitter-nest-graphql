@@ -7,12 +7,11 @@ import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
 
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { UsersModule, UsersService } from "./users";
-import { PrismaModule, PrismaService } from "./prisma";
+import { UsersModule } from "./users";
+import { PrismaModule } from "./prisma";
 import { AuthModule } from "./auth/auth.module";
-import { AuthService } from "./auth/auth.service";
 import { RedisModule } from "./redis/redis.module";
-import { MailersModule } from './mailers/mailers.module';
+import { MailersModule } from "./mailers/mailers.module";
 
 @Module({
   imports: [
@@ -34,6 +33,6 @@ import { MailersModule } from './mailers/mailers.module';
     MailersModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService, PrismaService, UsersService],
+  providers: [AppService],
 })
 export class AppModule {}
