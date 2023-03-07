@@ -9,6 +9,7 @@ import { RedisService } from "src/redis/redis.service";
 import { UsersService } from "src/users";
 import { AuthService } from "./auth.service";
 import { ApolloError } from "apollo-server-express";
+import { UsersMailer } from "src/mailers/users.mailer";
 
 enum GraphqlType {
   Error = "Error",
@@ -23,6 +24,7 @@ export class AuthResolver {
   constructor(
     private authService: AuthService,
     private redisService: RedisService,
+    private usersMailer: UsersMailer,
     @Inject(forwardRef(() => UsersService)) private usersService: UsersService,
     @Inject("JwtAccessService") private jwtAccessService: JwtService,
     @Inject("JwtRefreshService") private jwtRefreshServcie: JwtService,
@@ -64,6 +66,12 @@ export class AuthResolver {
       password: hashedPassword,
       emailToken,
     });
+
+    await this.usersMailer.sendEmailValidationMessage(emailToken, email);
+    return {
+      message:
+        "We have sent you validation email. Please follow instructions from this email",
+    };
   }
 
   @Mutation()
