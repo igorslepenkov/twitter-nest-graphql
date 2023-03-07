@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { RedisCommandArgument } from "@redis/client/dist/lib/commands";
 import { createClient, RedisClientType } from "redis";
+import { PrivacyInfo } from "src/decorators";
 import { UserInput } from "src/graphql";
+import { Session } from "src/types";
 
 export enum TimeType {
   Hours = "hours",
@@ -95,5 +97,53 @@ export class RedisService {
     if (!data) return null;
 
     return JSON.parse(data);
+  }
+
+  public async setNewSessionData(userId: string, data: Session) {
+    await this.client.connect();
+    const key = `sessions:user:${userId}`;
+    const JSONDataString = JSON.stringify(data);
+    const isExists = await this.client.SISMEMBER(key, JSONDataString);
+
+    if (!isExists) {
+      const sessionsLength = await this.client.SCARD(key);
+
+      const maxSessionsCount = Number(process.env.MAX_ACTIVE_SESSIONS) ?? 10;
+
+      if (sessionsLength > maxSessionsCount) {
+        const firstSession = await this.client.SMEMBERS(key);
+        await this.client.SREM(key, firstSession[0]);
+      }
+
+      await this.client.SADD(key, JSONDataString);
+    }
+
+    await this.client.disconnect();
+  }
+
+  public async getAllActiveSessions(userId: string): Promise<Session[]> {
+    await this.client.connect();
+
+    const key = `sessions:user:${userId}`;
+    const sessions = await this.client.SMEMBERS(key);
+
+    await this.client.disconnect();
+
+    return sessions.map((sessionString) => JSON.parse(sessionString));
+  }
+
+  public async isSessionActive(
+    userId: string,
+    privacyinfo: PrivacyInfo,
+  ): Promise<boolean> {
+    const sessions = await this.getAllActiveSessions(userId);
+
+    const isActive = sessions.some(
+      (session) =>
+        session.ip === privacyinfo.ip &&
+        session.userAgent === privacyinfo.userAgent,
+    );
+
+    return isActive;
   }
 }

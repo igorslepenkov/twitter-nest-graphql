@@ -47,10 +47,9 @@ export class UsersService {
       const { user: userModel } = this.prisma;
 
       const { email, password } = userInput;
-      const hashedPassword = await this.hashPassword(password);
 
       const user = await userModel.create({
-        data: { email, password: hashedPassword },
+        data: { email, password },
         include: { records: true },
       });
       return this.removePasswordFromUser(user);

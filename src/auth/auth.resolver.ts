@@ -9,14 +9,8 @@ import { RedisService } from "src/redis/redis.service";
 import { UsersService } from "src/users";
 import { AuthService } from "./auth.service";
 import { ApolloError } from "apollo-server-express";
-import { UsersMailer } from "src/mailers/users.mailer";
-
-enum GraphqlType {
-  Error = "Error",
-  RegisterSuccessfull = "RegisterSuccessfull",
-  AuthSuccessfull = "AuthSuccessfull",
-  EmailValidationSuccessfull = "EmailValidationSuccessfull",
-}
+import { UsersMailer, AuthMailer } from "src/mailers";
+import { PrivacyInfo } from "src/decorators";
 
 @Resolver("Auth")
 @UseFilters(ApolloErrorFilter)
@@ -25,13 +19,17 @@ export class AuthResolver {
     private authService: AuthService,
     private redisService: RedisService,
     private usersMailer: UsersMailer,
+    private authMailer: AuthMailer,
     @Inject(forwardRef(() => UsersService)) private usersService: UsersService,
     @Inject("JwtAccessService") private jwtAccessService: JwtService,
     @Inject("JwtRefreshService") private jwtRefreshServcie: JwtService,
   ) {}
 
   @Mutation()
-  async login(@Args("input") userInput: UserInput) {
+  async login(
+    @PrivacyInfo() privacyInfo: PrivacyInfo,
+    @Args("input") userInput: UserInput,
+  ) {
     const { email, password } = userInput;
 
     const validationResult = await this.authService.validateUser(
@@ -43,6 +41,14 @@ export class AuthResolver {
 
     const accessToken = this.jwtAccessService.sign({ userId });
     const refreshToken = this.jwtRefreshServcie.sign({ userId });
+
+    await this.redisService.setNewSessionData(userId, {
+      ...privacyInfo,
+      accessToken,
+      refreshToken,
+    });
+
+    await this.authMailer.sendLoginMessage(email, privacyInfo);
 
     return {
       accessToken,
