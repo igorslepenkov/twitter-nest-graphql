@@ -17,6 +17,14 @@ export class ValidateEmailInput {
     token: string;
 }
 
+export class RefreshTokensInput {
+    refreshToken: string;
+}
+
+export class GetUserInput {
+    id: string;
+}
+
 export class UserInput {
     email: string;
     password: string;
@@ -46,7 +54,7 @@ export abstract class IQuery {
 
     abstract users(): Nullable<Nullable<UserWithoutPassword>[]> | Promise<Nullable<Nullable<UserWithoutPassword>[]>>;
 
-    abstract user(id: string): Nullable<UserWithoutPassword> | Promise<Nullable<UserWithoutPassword>>;
+    abstract user(input?: Nullable<GetUserInput>): Nullable<UserWithoutPassword> | Promise<Nullable<UserWithoutPassword>>;
 }
 
 export abstract class IMutation {
@@ -55,6 +63,8 @@ export abstract class IMutation {
     abstract register(input?: Nullable<UsersInput>): Nullable<RegisterSuccessfull> | Promise<Nullable<RegisterSuccessfull>>;
 
     abstract validateEmail(input?: Nullable<ValidateEmailInput>): Nullable<AuthSuccessfull> | Promise<Nullable<AuthSuccessfull>>;
+
+    abstract refreshTokens(input?: Nullable<RefreshTokensInput>): Nullable<AuthSuccessfull> | Promise<Nullable<AuthSuccessfull>>;
 
     abstract createUser(input: UserInput): Nullable<UserWithoutPassword> | Promise<Nullable<UserWithoutPassword>>;
 }

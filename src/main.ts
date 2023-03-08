@@ -2,6 +2,7 @@ import { config as configEnv } from "dotenv";
 
 configEnv();
 
+import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { PrismaService } from "./prisma";
@@ -14,6 +15,7 @@ async function bootstrap() {
   const prismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app);
 
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(PORT);
   console.log("Listens on port:", PORT);
 }

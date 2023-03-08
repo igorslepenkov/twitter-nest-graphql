@@ -99,6 +99,7 @@ export class AuthService {
   }
 
   public async validateRegistrationEmail(
+    privacyInfo: PrivacyInfo,
     validateEmailInput: ValidateEmailInput,
   ): Promise<AuthSuccessfull> {
     try {
@@ -118,6 +119,17 @@ export class AuthService {
       if (user) {
         const accessToken = this.jwtAccessService.sign({ userId: user.id });
         const refreshToken = this.jwtRefreshServcie.sign({ userId: user.id });
+
+        const result = await this.redisService.setNewSessionData(user.id, {
+          accessToken,
+          refreshToken,
+          ...privacyInfo,
+        });
+
+        if (!result)
+          throw new ApolloError(
+            "Error during new session registration. Please contact support team",
+          );
 
         return {
           accessToken,
@@ -144,6 +156,46 @@ export class AuthService {
       return {
         message: "Sign out successfull",
       };
+    } catch (err) {
+      const message = err.message;
+
+      if (message) {
+        throw new ApolloError(message);
+      }
+
+      throw new ApolloError("Unexpected user login error");
+    }
+  }
+
+  public async refreshSession(
+    privacyInfo: PrivacyInfo,
+    token: string,
+  ): Promise<AuthSuccessfull> {
+    try {
+      const payload = await this.jwtRefreshServcie.verifyAsync(token);
+
+      if (payload && "userId" in payload) {
+        const { userId } = payload;
+        const session = await this.redisService.getActiveSession(
+          userId,
+          privacyInfo,
+        );
+        if (session.refreshToken === token) {
+          const accessToken = this.jwtAccessService.sign({ userId });
+          const refreshToken = this.jwtRefreshServcie.sign({ userId });
+
+          await this.redisService.refreshSession(userId, privacyInfo, {
+            accessToken,
+            refreshToken,
+          });
+
+          return { accessToken, refreshToken };
+        }
+      }
+
+      throw new ApolloError(
+        "Refresh token does not match, invalid or sessions is expired",
+      );
     } catch (err) {
       const message = err.message;
 

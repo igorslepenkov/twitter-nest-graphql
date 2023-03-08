@@ -24,6 +24,10 @@ input ValidateEmailInput {
   token: String!
 }
 
+input RefreshTokensInput {
+  refreshToken: String!
+}
+
 type Query {
   signOut: SignOutSuccessfull
 }
@@ -32,4 +36,5 @@ type Mutation {
   login(input: UsersInput!): AuthSuccessfull
   register(input: UsersInput): RegisterSuccessfull
   validateEmail(input: ValidateEmailInput): AuthSuccessfull
+  refreshTokens(input: RefreshTokensInput): AuthSuccessfull
 }

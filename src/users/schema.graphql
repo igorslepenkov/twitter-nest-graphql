@@ -11,9 +11,13 @@ type UserWithoutPassword {
   records: [TwitterRecord!]!
 }
 
+input GetUserInput {
+  id: ID!
+}
+
 type Query {
   users: [UserWithoutPassword]
-  user(id: ID!): UserWithoutPassword
+  user(input: GetUserInput): UserWithoutPassword
 }
 
 input UserInput {

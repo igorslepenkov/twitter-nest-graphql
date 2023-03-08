@@ -2,11 +2,15 @@ import { UseFilters, UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 
 import { ApolloErrorFilter } from "src/filters";
-import { UserInput, ValidateEmailInput } from "src/graphql";
 import { AuthService } from "./auth.service";
 import { PrivacyInfo, User } from "src/decorators";
 import { AuthGuard, SessionGuard } from "./guards";
 import { UserWithRecords, WithoutPassword } from "src/users";
+import {
+  UsersInputDTO,
+  ValidateEmailInputDTO,
+  RefreshTokensInputDTO,
+} from "./dto";
 
 @Resolver("Auth")
 @UseFilters(ApolloErrorFilter)
@@ -16,19 +20,33 @@ export class AuthResolver {
   @Mutation()
   async login(
     @PrivacyInfo() privacyInfo: PrivacyInfo,
-    @Args("input") userInput: UserInput,
+    @Args("input") userInput: UsersInputDTO,
   ) {
     return await this.authService.loginUser(userInput, privacyInfo);
   }
 
   @Mutation()
-  async register(@Args("input") userInput: UserInput) {
+  async register(@Args("input") userInput: UsersInputDTO) {
     return await this.authService.register(userInput);
   }
 
   @Mutation()
-  async validateEmail(@Args("input") validateEmailInput: ValidateEmailInput) {
-    return await this.authService.validateRegistrationEmail(validateEmailInput);
+  async validateEmail(
+    @PrivacyInfo() privacyInfo: PrivacyInfo,
+    @Args("input") validateEmailInput: ValidateEmailInputDTO,
+  ) {
+    return await this.authService.validateRegistrationEmail(
+      privacyInfo,
+      validateEmailInput,
+    );
+  }
+
+  @Mutation()
+  async refreshTokens(
+    @PrivacyInfo() privacyInfo: PrivacyInfo,
+    @Args("input") { refreshToken }: RefreshTokensInputDTO,
+  ) {
+    return await this.authService.refreshSession(privacyInfo, refreshToken);
   }
 
   @Query()
