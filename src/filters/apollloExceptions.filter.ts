@@ -6,6 +6,9 @@ import { ApolloError } from "apollo-server-express";
 export class ApolloErrorFilter implements GqlExceptionFilter {
   catch(exception: ApolloError, host: ArgumentsHost) {
     const gqlHost = GqlArgumentsHost.create(host);
+    console.log(
+      `Next exception was returned to the client: ${exception.name} // ${exception.message}`,
+    );
     return exception;
   }
 }

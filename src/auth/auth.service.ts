@@ -34,10 +34,18 @@ export class AuthService {
   ): Promise<AuthSuccessfull> {
     try {
       const { email, password } = userInput;
-
       const validationResult = await this.validateUser(email, password);
-
       const { id: userId } = validationResult;
+      const currentSession = await this.redisService.getActiveSession(
+        userId,
+        privacyInfo,
+      );
+
+      if (currentSession)
+        return {
+          accessToken: currentSession.accessToken,
+          refreshToken: currentSession.refreshToken,
+        };
 
       const accessToken = this.jwtAccessService.sign({ userId });
       const refreshToken = this.jwtRefreshServcie.sign({ userId });
@@ -48,12 +56,13 @@ export class AuthService {
         refreshToken,
       });
 
-      if (isSet) await this.authMailer.sendLoginMessage(email, privacyInfo);
-
-      return {
-        accessToken,
-        refreshToken,
-      };
+      if (isSet) {
+        await this.authMailer.sendLoginMessage(email, privacyInfo);
+        return {
+          accessToken,
+          refreshToken,
+        };
+      }
     } catch (err) {
       const message = err.message;
 
