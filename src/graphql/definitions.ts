@@ -8,9 +8,65 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export class UsersInput {
+    email: string;
+    password: string;
+}
+
+export class ValidateEmailInput {
+    token: string;
+}
+
+export class RefreshTokensInput {
+    refreshToken: string;
+}
+
+export class GetUserInput {
+    id: string;
+}
+
 export class UserInput {
     email: string;
     password: string;
+}
+
+export class AuthSuccessfull {
+    accessToken: string;
+    refreshToken: string;
+}
+
+export class RegisterSuccessfull {
+    message: string;
+}
+
+export class EmailValidationSuccessfull {
+    mesage: string;
+}
+
+export class SignOutSuccessfull {
+    message: string;
+}
+
+export abstract class IQuery {
+    abstract signOut(): Nullable<SignOutSuccessfull> | Promise<Nullable<SignOutSuccessfull>>;
+
+    abstract twitterRecords(): Nullable<Nullable<TwitterRecord>[]> | Promise<Nullable<Nullable<TwitterRecord>[]>>;
+
+    abstract users(): Nullable<Nullable<UserWithoutPassword>[]> | Promise<Nullable<Nullable<UserWithoutPassword>[]>>;
+
+    abstract user(input?: Nullable<GetUserInput>): Nullable<UserWithoutPassword> | Promise<Nullable<UserWithoutPassword>>;
+}
+
+export abstract class IMutation {
+    abstract login(input: UsersInput): Nullable<AuthSuccessfull> | Promise<Nullable<AuthSuccessfull>>;
+
+    abstract register(input?: Nullable<UsersInput>): Nullable<RegisterSuccessfull> | Promise<Nullable<RegisterSuccessfull>>;
+
+    abstract validateEmail(input?: Nullable<ValidateEmailInput>): Nullable<AuthSuccessfull> | Promise<Nullable<AuthSuccessfull>>;
+
+    abstract refreshTokens(input?: Nullable<RefreshTokensInput>): Nullable<AuthSuccessfull> | Promise<Nullable<AuthSuccessfull>>;
+
+    abstract createUser(input: UserInput): Nullable<UserWithoutPassword> | Promise<Nullable<UserWithoutPassword>>;
 }
 
 export class TwitterRecord {
@@ -26,14 +82,6 @@ export class TwitterRecord {
     updatedAt: string;
 }
 
-export abstract class IQuery {
-    abstract twitterRecords(): Nullable<Nullable<TwitterRecord>[]> | Promise<Nullable<Nullable<TwitterRecord>[]>>;
-
-    abstract users(): Nullable<Nullable<User>[]> | Promise<Nullable<Nullable<User>[]>>;
-
-    abstract user(id: string): Nullable<User> | Promise<Nullable<User>>;
-}
-
 export class User {
     id: string;
     email: string;
@@ -41,8 +89,10 @@ export class User {
     records: TwitterRecord[];
 }
 
-export abstract class IMutation {
-    abstract createUser(input: UserInput): Nullable<User> | Promise<Nullable<User>>;
+export class UserWithoutPassword {
+    id: string;
+    email: string;
+    records: TwitterRecord[];
 }
 
 type Nullable<T> = T | null;

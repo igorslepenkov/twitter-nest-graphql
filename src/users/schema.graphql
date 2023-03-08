@@ -1,0 +1,30 @@
+type User {
+  id: ID!
+  email: String!
+  password: String!
+  records: [TwitterRecord!]!
+}
+
+type UserWithoutPassword {
+  id: ID!
+  email: String!
+  records: [TwitterRecord!]!
+}
+
+input GetUserInput {
+  id: ID!
+}
+
+type Query {
+  users: [UserWithoutPassword]
+  user(input: GetUserInput): UserWithoutPassword
+}
+
+input UserInput {
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  createUser(input: UserInput!): UserWithoutPassword
+}
