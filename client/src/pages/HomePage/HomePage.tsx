@@ -1,5 +1,5 @@
-import React from "react";
+import { Page, Toolsbar, Authwindow, Newsline } from "../../components";
 
 export const HomePage = () => {
-  return <div>HomePage</div>;
+  return <Page nodes={[<Toolsbar />, <Newsline />, <Authwindow />]} />;
 };
