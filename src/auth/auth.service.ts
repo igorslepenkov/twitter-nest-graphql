@@ -182,7 +182,6 @@ export class AuthService {
   ): Promise<AuthSuccessfull> {
     try {
       const payload = await this.jwtRefreshServcie.verifyAsync(token);
-
       if (payload && "userId" in payload) {
         const { userId } = payload;
         const session = await this.redisService.getActiveSession(

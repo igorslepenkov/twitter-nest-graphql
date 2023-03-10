@@ -10,8 +10,13 @@ import {
 
 import SearchIcon from "@mui/icons-material/Search";
 
-export const Searchbar = () => {
-  const searchbarStyles: SxProps<Theme> = (theme: Theme) => ({
+interface IProps {
+  id: string;
+  placeholder: string;
+}
+
+export const Searchbar = ({ placeholder, id }: IProps) => {
+  const searchbarStyles: SxProps<Theme> = () => ({
     margin: "20px",
     padding: "10px",
   });
@@ -20,16 +25,16 @@ export const Searchbar = () => {
     <Box sx={searchbarStyles}>
       <FormControl variant="outlined" fullWidth>
         <Input
-          id="newsline-search"
+          id={id}
           fullWidth
           startAdornment={
             <InputAdornment position="start">
-              <InputLabel htmlFor="newsline-search">
+              <InputLabel htmlFor={id}>
                 <SearchIcon />
               </InputLabel>
             </InputAdornment>
           }
-          placeholder="Search news"
+          placeholder={placeholder}
         />
       </FormControl>
     </Box>

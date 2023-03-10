@@ -1,7 +1,11 @@
 import { Box, Button, SxProps, Theme, Typography } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 
-export const Authwindow = () => {
+interface IProps {
+  handleLoginModal: () => void;
+}
+
+export const Authwindow = ({ handleLoginModal }: IProps) => {
   const windowStyles: SxProps<Theme> = (theme: Theme) => ({
     margin: "15px auto",
     padding: "30px 12px",
@@ -20,7 +24,12 @@ export const Authwindow = () => {
       </Typography>
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-        <Button fullWidth variant="outlined" sx={{ borderRadius: "20px" }}>
+        <Button
+          fullWidth
+          variant="outlined"
+          sx={{ borderRadius: "20px" }}
+          onClick={handleLoginModal}
+        >
           Log In
         </Button>
 

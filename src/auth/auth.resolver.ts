@@ -17,12 +17,18 @@ import {
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
-  @Mutation()
+  @Query()
   async login(
     @PrivacyInfo() privacyInfo: PrivacyInfo,
     @Args("input") userInput: UsersInputDTO,
   ) {
     return await this.authService.loginUser(userInput, privacyInfo);
+  }
+
+  @Query()
+  @UseGuards(AuthGuard, SessionGuard)
+  async currentUser(@User() user: WithoutPassword<UserWithRecords>) {
+    return user;
   }
 
   @Mutation()
