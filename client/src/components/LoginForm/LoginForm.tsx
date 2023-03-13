@@ -1,10 +1,10 @@
 import ClipLoader from "react-spinners/ClipLoader";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
-import { loginQuery } from "../../graphql/queries";
+import { loginMutation } from "../../graphql/mutations";
 import { emailRegex } from "../../regexp";
 import { IAuthSuccessfull, IUsersInput } from "../../types";
-import { useLazyQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { useEffect } from "react";
 import {
   LocalStorageEndpoint,
@@ -24,22 +24,22 @@ export const LoginForm = ({ handleCloseModal }: IProps) => {
     reset,
     setError,
   } = useForm<IUsersInput>();
-  const [executeQuery, { loading, error, data: authData }] = useLazyQuery<{
+  const [executeQuery, { loading, data: authData }] = useMutation<{
     login: IAuthSuccessfull;
-  }>(loginQuery);
+  }>(loginMutation);
 
-  const [_, triggerStorageEvent] = useLocalStorageState(
+  const { setTrigger: triggerStorageEvent } = useLocalStorageState(
     LocalStorageEndpoint.Auth,
   );
 
   const onSubmit = async (data: IUsersInput) => {
-    await executeQuery({ variables: { input: data } });
-
-    if (error) setError("root", { message: error.message });
-
-    if (!error) {
-      reset();
-    }
+    executeQuery({ variables: { input: data } })
+      .then(() => {
+        reset();
+      })
+      .catch((error) => {
+        setError("root", { message: error.message });
+      });
   };
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export const LoginForm = ({ handleCloseModal }: IProps) => {
       triggerStorageEvent();
       handleCloseModal();
     }
-  }, [authData, handleCloseModal]);
+  }, [authData, handleCloseModal, triggerStorageEvent]);
 
   if (loading) {
     return <ClipLoader loading={loading} color="#f00909" />;
@@ -69,6 +69,12 @@ export const LoginForm = ({ handleCloseModal }: IProps) => {
         width: "100%",
       }}
     >
+      {errors.root && (
+        <Typography variant="subtitle2" color="error">
+          {errors.root.message}
+        </Typography>
+      )}
+
       <Controller
         control={control}
         name="email"

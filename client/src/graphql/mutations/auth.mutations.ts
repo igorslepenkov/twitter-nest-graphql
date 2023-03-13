@@ -8,3 +8,20 @@ export const refreshTokensMutation = gql`
     }
   }
 `;
+
+export const signOutMutation = gql`
+  mutation Mutation {
+    signOut {
+      message
+    }
+  }
+`;
+
+export const loginMutation = gql`
+  mutation Login($input: UsersInput!) {
+    login(input: $input) {
+      accessToken
+      refreshToken
+    }
+  }
+`;

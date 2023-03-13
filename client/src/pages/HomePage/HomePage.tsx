@@ -13,7 +13,7 @@ import { IAuthSuccessfull } from "../../types";
 export const HomePage = () => {
   const [isAuthModalOpen, toggleAuthModal] = useToggle();
 
-  const [authData] = useLocalStorageState<IAuthSuccessfull>(
+  const { value: authData } = useLocalStorageState<IAuthSuccessfull>(
     LocalStorageEndpoint.Auth,
   );
 

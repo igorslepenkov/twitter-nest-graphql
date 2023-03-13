@@ -18,7 +18,7 @@ import { Searchbar } from "../Searchbar";
 import { TabPanel } from "../TabPanel";
 
 export const Newsline = () => {
-  const [authData] = useLocalStorageState<IAuthSuccessfull>(
+  const { value: authData } = useLocalStorageState<IAuthSuccessfull>(
     LocalStorageEndpoint.Auth,
   );
 
