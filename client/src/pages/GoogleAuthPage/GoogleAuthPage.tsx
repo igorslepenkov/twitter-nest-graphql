@@ -1,40 +1,38 @@
-import { useEffect } from "react";
 import { useMutation } from "@apollo/client";
-import { Box } from "@mui/system";
-import { useNavigate, useParams } from "react-router-dom";
+import { Box } from "@mui/material";
+import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
-
-import { validateEmailMutation } from "../../graphql/mutations";
+import { googleAuthMutation } from "../../graphql/mutations";
 import { useLocalStorageState } from "../../hooks";
 import { ROUTE } from "../../router";
 import { LocalStorageEndpoint, localStorageRepository } from "../../services";
 
-export const ValidateEmailPage = () => {
-  const { token } = useParams();
+export const GoogleAuthPage = () => {
+  const [searchParams] = useSearchParams();
+
   const { setTrigger } = useLocalStorageState(LocalStorageEndpoint.Auth);
 
-  const [validate] = useMutation(validateEmailMutation);
+  const code = searchParams.get("code");
+
+  const [authenticate] = useMutation(googleAuthMutation);
 
   const navigate = useNavigate();
   const navidateToHomePage = () => {
     navigate(ROUTE.Home);
   };
-  const validateEmail = () => {
-    if (token) {
-      validate({ variables: { input: { token } } }).then(({ data }) => {
-        localStorageRepository.set(
-          LocalStorageEndpoint.Auth,
-          data.validateEmail,
-        );
-        setTrigger();
-        navidateToHomePage();
-      });
-    }
+
+  const googleAuth = () => {
+    authenticate({ variables: { input: { code } } }).then(({ data }) => {
+      localStorageRepository.set(LocalStorageEndpoint.Auth, data.googleAuth);
+      setTrigger();
+      navidateToHomePage();
+    });
   };
 
   useEffect(() => {
-    if (token) {
-      validateEmail();
+    if (code) {
+      googleAuth();
     }
   }, []);
 

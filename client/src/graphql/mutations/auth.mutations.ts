@@ -42,3 +42,12 @@ export const validateEmailMutation = gql`
     }
   }
 `;
+
+export const googleAuthMutation = gql`
+  mutation Mutation($input: GoogleAuthInput) {
+    googleAuth(input: $input) {
+      accessToken
+      refreshToken
+    }
+  }
+`;

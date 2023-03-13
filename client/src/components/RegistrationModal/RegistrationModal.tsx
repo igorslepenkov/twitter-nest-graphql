@@ -12,6 +12,7 @@ import { SxProps } from "@mui/system";
 import CloseIcon from "@mui/icons-material/Close";
 import GoogleIcon from "@mui/icons-material/Google";
 import { RegistrationForm } from "../RegistrationForm";
+import { getGoogleUrl } from "../../utils";
 
 interface IProps {
   open: boolean;
@@ -63,6 +64,8 @@ export const RegistrationModal = ({ open, handleClose }: IProps) => {
 
               <Button
                 fullWidth
+                component="a"
+                href={getGoogleUrl()}
                 variant="outlined"
                 sx={{ borderRadius: "20px" }}
               >

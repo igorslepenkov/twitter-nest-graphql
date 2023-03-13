@@ -1,5 +1,6 @@
 import { Box, Button, SxProps, Theme, Typography } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
+import { getGoogleUrl } from "../../utils";
 
 interface IProps {
   handleLoginModal: () => void;
@@ -37,7 +38,13 @@ export const Authwindow = ({
           Log In
         </Button>
 
-        <Button fullWidth variant="outlined" sx={{ borderRadius: "20px" }}>
+        <Button
+          fullWidth
+          component="a"
+          href={getGoogleUrl()}
+          variant="outlined"
+          sx={{ borderRadius: "20px" }}
+        >
           <GoogleIcon sx={{ marginRight: "10px" }} />
           Log In with Google
         </Button>
