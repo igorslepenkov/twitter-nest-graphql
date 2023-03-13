@@ -33,14 +33,30 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
       )?.refreshToken;
 
       if (refreshToken) {
-        apolloClient.mutate({
-          mutation: refreshTokensMutation,
-          variables: {
-            input: { refreshToken },
-          },
-        });
-
-        apolloClient.refetchQueries({ include: "active" });
+        console.log("[GraphQL error] Trying to refresh tokens");
+        apolloClient
+          .mutate({
+            mutation: refreshTokensMutation,
+            variables: {
+              input: { refreshToken },
+            },
+          })
+          .then(({ data }) => {
+            console.log(
+              "[GraphQL error] Tokens were refreshed. Access restored",
+            );
+            localStorageRepository.set<IAuthSuccessfull>(
+              LocalStorageEndpoint.Auth,
+              data.refreshTokens,
+            );
+            window.dispatchEvent(new Event(`${LocalStorageEndpoint.Auth}-set`));
+            apolloClient.refetchQueries({ include: "active" });
+          })
+          .catch(() => {
+            console.log(
+              "[GraphQL error] Tokens could not be refreshed. Access backend team",
+            );
+          });
       }
     }
   }
