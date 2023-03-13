@@ -12,6 +12,7 @@ import { PrismaModule } from "./prisma";
 import { AuthModule } from "./auth/auth.module";
 import { RedisModule } from "./redis/redis.module";
 import { MailersModule } from "./mailers/mailers.module";
+import { GoogleAuthModule } from './google-auth/google-auth.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { MailersModule } from "./mailers/mailers.module";
     }),
     RedisModule,
     MailersModule,
+    GoogleAuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

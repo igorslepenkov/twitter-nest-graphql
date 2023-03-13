@@ -1,4 +1,5 @@
 import { forwardRef, Module } from "@nestjs/common";
+import { GoogleAuthModule } from "src/google-auth";
 
 import { JwtAccessModule, JwtRefreshModule } from "src/jwt";
 import { MailersModule } from "src/mailers";
@@ -14,6 +15,7 @@ import { AuthService } from "./auth.service";
     JwtRefreshModule,
     RedisModule,
     MailersModule,
+    GoogleAuthModule,
   ],
   providers: [AuthService, AuthResolver],
 })

@@ -21,6 +21,10 @@ export class RefreshTokensInput {
     refreshToken: string;
 }
 
+export class GoogleAuthInput {
+    code: string;
+}
+
 export class GetUserInput {
     id: string;
 }
@@ -67,6 +71,8 @@ export abstract class IMutation {
     abstract signOut(): Nullable<SignOutSuccessfull> | Promise<Nullable<SignOutSuccessfull>>;
 
     abstract refreshTokens(input?: Nullable<RefreshTokensInput>): Nullable<AuthSuccessfull> | Promise<Nullable<AuthSuccessfull>>;
+
+    abstract googleAuth(input?: Nullable<GoogleAuthInput>): Nullable<AuthSuccessfull> | Promise<Nullable<AuthSuccessfull>>;
 
     abstract createUser(input: UserInput): Nullable<UserWithoutPassword> | Promise<Nullable<UserWithoutPassword>>;
 }

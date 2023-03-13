@@ -4,6 +4,7 @@ import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { ApolloError } from "apollo-server-express";
+import axios from "axios";
 
 import { UsersService, UserWithRecords, WithoutPassword } from "src/users";
 import {
@@ -12,10 +13,12 @@ import {
   UserInput,
   ValidateEmailInput,
   SignOutSuccessfull,
+  GoogleAuthInput,
 } from "src/graphql";
 import { RedisService } from "src/redis";
 import { AuthMailer, UsersMailer } from "src/mailers";
 import { PrivacyInfo } from "src/decorators";
+import { GoogleAuthService } from "src/google-auth";
 
 @Injectable()
 export class AuthService {
@@ -23,6 +26,7 @@ export class AuthService {
     private redisService: RedisService,
     private authMailer: AuthMailer,
     private usersMailer: UsersMailer,
+    private googleAuthService: GoogleAuthService,
     @Inject("JwtAccessService") private jwtAccessService: JwtService,
     @Inject("JwtRefreshService") private jwtRefreshServcie: JwtService,
     @Inject(forwardRef(() => UsersService)) private usersService: UsersService,
@@ -204,6 +208,62 @@ export class AuthService {
       throw new ApolloError(
         "Refresh token does not match, invalid or sessions is expired",
       );
+    } catch (err) {
+      const message = err.message;
+
+      if (message) {
+        throw new ApolloError(message);
+      }
+
+      throw new ApolloError("Unexpected user login error");
+    }
+  }
+
+  public async googleAuth({ code }: GoogleAuthInput, privacyInfo: PrivacyInfo) {
+    try {
+      if (!code) {
+        throw new ApolloError("Authorization code was not provided");
+      }
+
+      const { id_token, access_token } =
+        await this.googleAuthService.getGoogleOauthToken({ code });
+
+      const { verified_email, email } =
+        await this.googleAuthService.getGoogleUser({
+          id_token,
+          access_token,
+        });
+
+      if (!verified_email) {
+        throw new ApolloError("Google account not verified");
+      }
+
+      const existingUser = await this.usersService.getByEmail(email);
+      let accessToken: string;
+      let refreshToken: string;
+
+      if (!existingUser) {
+        const pseudoPassword = randomBytes(50).toString("hex");
+        const user = await this.usersService.create({
+          email,
+          password: pseudoPassword,
+        });
+        accessToken = this.jwtAccessService.sign({ userId: user.id });
+        refreshToken = this.jwtRefreshServcie.sign({ userId: user.id });
+        await this.redisService.refreshSession(user.id, privacyInfo, {
+          accessToken,
+          refreshToken,
+        });
+      } else {
+        accessToken = this.jwtAccessService.sign({ userId: existingUser.id });
+        refreshToken = this.jwtRefreshServcie.sign({ userId: existingUser.id });
+        await this.redisService.refreshSession(existingUser.id, privacyInfo, {
+          accessToken,
+          refreshToken,
+        });
+      }
+
+      return { accessToken, refreshToken };
     } catch (err) {
       const message = err.message;
 

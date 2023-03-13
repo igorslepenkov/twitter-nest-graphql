@@ -11,6 +11,7 @@ import {
   ValidateEmailInputDTO,
   RefreshTokensInputDTO,
 } from "./dto";
+import { GoogleAuthInput } from "src/graphql";
 
 @Resolver("Auth")
 @UseFilters(ApolloErrorFilter)
@@ -62,5 +63,13 @@ export class AuthResolver {
     @PrivacyInfo() privacyInfo: PrivacyInfo,
   ) {
     return await this.authService.signOut(user.id, privacyInfo);
+  }
+
+  @Mutation()
+  async googleAuth(
+    @PrivacyInfo() privacyInfo: PrivacyInfo,
+    @Args("input") googleAuthInput: GoogleAuthInput,
+  ) {
+    return await this.authService.googleAuth(googleAuthInput, privacyInfo);
   }
 }
