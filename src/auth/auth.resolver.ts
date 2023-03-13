@@ -17,7 +17,7 @@ import {
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
-  @Query()
+  @Mutation()
   async login(
     @PrivacyInfo() privacyInfo: PrivacyInfo,
     @Args("input") userInput: UsersInputDTO,
@@ -55,7 +55,7 @@ export class AuthResolver {
     return await this.authService.refreshSession(privacyInfo, refreshToken);
   }
 
-  @Query()
+  @Mutation()
   @UseGuards(AuthGuard, SessionGuard)
   async signOut(
     @User() user: WithoutPassword<UserWithRecords>,

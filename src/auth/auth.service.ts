@@ -57,7 +57,7 @@ export class AuthService {
       });
 
       if (isSet) {
-        await this.authMailer.sendLoginMessage(email, privacyInfo);
+        this.authMailer.sendLoginMessage(email, privacyInfo);
         return {
           accessToken,
           refreshToken,

@@ -29,13 +29,13 @@ input RefreshTokensInput {
 }
 
 type Query {
-  signOut: SignOutSuccessfull
-  login(input: UsersInput!): AuthSuccessfull
   currentUser: UserWithoutPassword
 }
 
 type Mutation {
   register(input: UsersInput): RegisterSuccessfull
+  login(input: UsersInput!): AuthSuccessfull
   validateEmail(input: ValidateEmailInput): AuthSuccessfull
+  signOut: SignOutSuccessfull
   refreshTokens(input: RefreshTokensInput): AuthSuccessfull
 }
