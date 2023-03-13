@@ -25,3 +25,20 @@ export const loginMutation = gql`
     }
   }
 `;
+
+export const registerMutation = gql`
+  mutation Mutation($input: UsersInput) {
+    register(input: $input) {
+      message
+    }
+  }
+`;
+
+export const validateEmailMutation = gql`
+  mutation ValidateEmail($input: ValidateEmailInput) {
+    validateEmail(input: $input) {
+      accessToken
+      refreshToken
+    }
+  }
+`;

@@ -6,3 +6,5 @@ export * from "./Newsline";
 export * from "./Searchbar";
 export * from "./LoginModal";
 export * from "./Trendsbar";
+export * from "./RegistrationForm";
+export * from "./RegistrationModal";

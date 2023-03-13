@@ -3,9 +3,13 @@ import GoogleIcon from "@mui/icons-material/Google";
 
 interface IProps {
   handleLoginModal: () => void;
+  handleRegisterModal: () => void;
 }
 
-export const Authwindow = ({ handleLoginModal }: IProps) => {
+export const Authwindow = ({
+  handleLoginModal,
+  handleRegisterModal,
+}: IProps) => {
   const windowStyles: SxProps<Theme> = (theme: Theme) => ({
     margin: "15px auto",
     padding: "30px 12px",
@@ -38,7 +42,12 @@ export const Authwindow = ({ handleLoginModal }: IProps) => {
           Log In with Google
         </Button>
 
-        <Button fullWidth variant="outlined" sx={{ borderRadius: "20px" }}>
+        <Button
+          fullWidth
+          variant="outlined"
+          sx={{ borderRadius: "20px" }}
+          onClick={handleRegisterModal}
+        >
           Register
         </Button>
       </Box>
