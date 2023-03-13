@@ -21,6 +21,10 @@ export class RefreshTokensInput {
     refreshToken: string;
 }
 
+export class GoogleAuthInput {
+    code: string;
+}
+
 export class GetUserInput {
     id: string;
 }
@@ -48,7 +52,7 @@ export class SignOutSuccessfull {
 }
 
 export abstract class IQuery {
-    abstract signOut(): Nullable<SignOutSuccessfull> | Promise<Nullable<SignOutSuccessfull>>;
+    abstract currentUser(): Nullable<UserWithoutPassword> | Promise<Nullable<UserWithoutPassword>>;
 
     abstract twitterRecords(): Nullable<Nullable<TwitterRecord>[]> | Promise<Nullable<Nullable<TwitterRecord>[]>>;
 
@@ -58,13 +62,17 @@ export abstract class IQuery {
 }
 
 export abstract class IMutation {
-    abstract login(input: UsersInput): Nullable<AuthSuccessfull> | Promise<Nullable<AuthSuccessfull>>;
-
     abstract register(input?: Nullable<UsersInput>): Nullable<RegisterSuccessfull> | Promise<Nullable<RegisterSuccessfull>>;
+
+    abstract login(input: UsersInput): Nullable<AuthSuccessfull> | Promise<Nullable<AuthSuccessfull>>;
 
     abstract validateEmail(input?: Nullable<ValidateEmailInput>): Nullable<AuthSuccessfull> | Promise<Nullable<AuthSuccessfull>>;
 
+    abstract signOut(): Nullable<SignOutSuccessfull> | Promise<Nullable<SignOutSuccessfull>>;
+
     abstract refreshTokens(input?: Nullable<RefreshTokensInput>): Nullable<AuthSuccessfull> | Promise<Nullable<AuthSuccessfull>>;
+
+    abstract googleAuth(input?: Nullable<GoogleAuthInput>): Nullable<AuthSuccessfull> | Promise<Nullable<AuthSuccessfull>>;
 
     abstract createUser(input: UserInput): Nullable<UserWithoutPassword> | Promise<Nullable<UserWithoutPassword>>;
 }

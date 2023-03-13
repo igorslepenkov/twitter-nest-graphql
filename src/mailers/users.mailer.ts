@@ -9,7 +9,7 @@ export class UsersMailer extends BaseMailer {
         ? process.env.REACT_PROD_DOMAIN
         : process.env.REACT_DEV_DOMAIN;
 
-    const validateEmailLink = `http://${domain}/users/validateEmail/${token}`;
+    const validateEmailLink = `http://${domain}/validateEmail/${token}`;
 
     await this.send({
       to: email,

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Scope } from "@nestjs/common";
 import { RedisCommandArgument } from "@redis/client/dist/lib/commands";
 import { createClient, RedisClientType } from "redis";
 
@@ -23,7 +23,7 @@ interface ISetOptions {
   time: number;
 }
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class RedisService {
   private readonly client: RedisClientType;
   constructor() {
@@ -64,7 +64,6 @@ export class RedisService {
     await this.client.connect();
     const result = await this.client.get(key);
     await this.client.disconnect();
-
     return result;
   }
 

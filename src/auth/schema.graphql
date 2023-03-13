@@ -28,13 +28,19 @@ input RefreshTokensInput {
   refreshToken: String!
 }
 
+input GoogleAuthInput {
+  code: String!
+}
+
 type Query {
-  signOut: SignOutSuccessfull
+  currentUser: UserWithoutPassword
 }
 
 type Mutation {
-  login(input: UsersInput!): AuthSuccessfull
   register(input: UsersInput): RegisterSuccessfull
+  login(input: UsersInput!): AuthSuccessfull
   validateEmail(input: ValidateEmailInput): AuthSuccessfull
+  signOut: SignOutSuccessfull
   refreshTokens(input: RefreshTokensInput): AuthSuccessfull
+  googleAuth(input: GoogleAuthInput): AuthSuccessfull
 }
