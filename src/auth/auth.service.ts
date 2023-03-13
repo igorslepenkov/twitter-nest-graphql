@@ -91,7 +91,7 @@ export class AuthService {
         emailToken,
       });
 
-      await this.usersMailer.sendEmailValidationMessage(emailToken, email);
+      this.usersMailer.sendEmailValidationMessage(emailToken, email);
       return {
         message:
           "We have sent you validation email. Please follow instructions from this email",
@@ -103,7 +103,7 @@ export class AuthService {
         throw new ApolloError(message);
       }
 
-      throw new ApolloError("Unexpected user login error");
+      throw new ApolloError("Unexpected user register error");
     }
   }
 
